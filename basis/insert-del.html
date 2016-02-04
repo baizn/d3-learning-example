@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>D3-插入，选择和删除元素</title>
+        <script type="text/javascript" src="../lib/d3.js"></script>
+    </head>
+    <body>
+        <!--
+            选择元素时候可以使用select和selectAll方法。当页面有多个p元素时候，选择其中某一个，可以给单独添加
+            id，然后使用d3.select('#p1')，当选择特定多个时候，可以添加class，使用d3.selectAll('.pclass');
+            select和selectAll选择元素时候支持css的选择器。
+
+            插入元素时候使用以下两个函数：
+            append(): 在选择集末位插入元素；
+            insert(): 在选择集前插入元素。
+
+            删除一个元素时候，使用remove，如：d3.select('body').select('#id').remove();
+        -->
+        <span id="id">给我添加ID</span>
+        <span class="cls">给我添加Class</span>
+        <span class="cls">给我添加Class</span>
+        <script type="text/javascript">
+            var spans = d3.selectAll('span');
+            spans.style('color', 'red');
+
+            var span1 = d3.select('#id');
+            span1.style('font-size', '30px');
+
+            var span23 = d3.selectAll('.cls');
+            span23.style('background', 'blue');
+
+            d3.select('body').append('p').text('新增在结尾')
+            .style('background', 'green').style('width', '150px');
+
+            d3.select('body').insert('p', '#id').text('插入在前面');
+        </script>
+    </body>
+</html>

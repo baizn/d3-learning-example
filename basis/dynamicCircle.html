@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>D3-动态效果</title>
+        <script type="text/javascript" src="../lib/d3.js"></script>
+    </head>
+    <body>
+        <!--
+            D3实现动态效果，提供了4个方法。
+            transition(): 启动过度效果，如.attr('fill', 'red').transition().attr('fill', 'green');
+            duration(): 指定过度的持续时间，单位为毫秒，如duration(2000),指持续2000毫秒
+            ease(): 指定过渡方式。
+                linear：普通的线性变化；
+                circle：慢慢达到变换的最终效果；
+                elastic：带有弹性的达到最终状态；
+                bounce：在最终状态处弹跳几次
+            如ease('circle');
+            delay(): 指定延迟的时间，表示一定时间后开始变换，单位为毫秒。可以对整体延迟，也可以对个别延迟。
+            对整体延迟：
+                .transition().duration(1000).delay(500);
+            对各个图形延迟：
+                .transition().duration(1000).delay(function(d, i) {
+                    return 200 * i;
+                });
+        -->
+        <script type="text/javascript">
+            var svg = d3.select('body').append('svg')
+                .attr('width', 500)
+                .attr('height', 600);
+
+            function makeCircle(svg, obj) {
+                var circle = svg.append('circle')
+                    .attr('cx', obj.x)
+                    .attr('cy', obj.y)
+                    .attr('r', obj.r)
+                    .attr('fill', obj.color);
+                return circle;
+            }
+
+            var circleObj1 = {
+                x: 100,
+                y: 100,
+                r: 45,
+                color: 'green'
+            };
+
+            var circlel = makeCircle(svg, circleObj1);
+            //在2秒内将圆心坐标由100变为300
+            circlel.transition().duration(2000).attr('cx', 300);
+
+            var circleObj2 = {
+                x: 100,
+                y: 260,
+                r: 50,
+                color: 'green'
+            }
+            var circle2 = makeCircle(svg, circleObj2);
+
+            //圆心坐标和颜色都变
+            circle2.transition().duration(2500).attr('cx', 300).attr('fill', 'red');
+
+            var circleObj3 = {
+                x: 100,
+                y: 380,
+                r: 60,
+                color: 'blue'
+            };
+            var circle3 = makeCircle(svg, circleObj3);
+            circle3.transition().duration(3000).ease('bounce')
+                .attr('cx', 300).attr('fill', 'green')
+                .attr('r', 35);
+        </script>
+    </body>
+</html>

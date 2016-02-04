@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>D3-饼图</title>
+        <script type="text/javascript" src="../lib/d3.js"></script>
+    </head>
+    <body>
+        <!--
+            D3中布局作用就是：计算出适合绘图的数据结构。
+
+            布局不是直接绘图，而是为了获取绘图所需要的数据。
+
+            SVG中有一个路径<path>，可以表示任意的图形。路径元素通过定义一个段“路就”，来绘制图形。
+        -->
+        <script type="text/javascript">
+            var width = 400;
+            var height = 400;
+
+            var svg = d3.select('body')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height);
+
+            var dataArr = [50, 20, 70, 90, 10];
+
+            //定义布局
+            var pie = d3.layout.pie();
+
+            //转换后的数据
+            var pieData = pie(dataArr);
+            console.log(pieData);
+
+            //饼图外半径
+            var outerRadius = 200;
+
+            //饼图内半径,0则没有空白
+            var innerRadius = 0;
+
+            //arc()称为弧生成器
+            var arc = d3.svg.arc()
+                .innerRadius(innerRadius)
+                .outerRadius(outerRadius);
+
+            var arcs = svg.selectAll('g')
+                .data(pieData)
+                .enter()
+                .append('g')
+                .attr('transform', 'translate(' + (width/2) + ',' + (width/2) + ')');
+
+            //颜色比例尺，根据传入的索引号获取相应的颜色值
+            var color = d3.scale.category10();
+
+            //为每个g元素添加path
+            arcs.append('path')
+                .attr('fill', function(d, i) {
+                    return color(i);
+                })
+                //路径属性名为d
+                .attr('d', function(d) {
+                    //调用弧生成器，获取路就值
+                    return arc(d);
+                });
+
+            //在每一个弧线中心添加文本
+            arcs.append('text')
+                .attr('transform', function(d) {
+                    //arc.centroid(d)能算出弧线的中心
+                    return 'translate(' + arc.centroid(d) + ')';
+                })
+                .attr('text-anchor', 'middle')
+                .text(function(d) {
+                    return d.data;
+                });
+        </script>
+    </body>
+</html>

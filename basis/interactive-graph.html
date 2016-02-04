@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>D3-可交互的图表</title>
+        <script type="text/javascript" src="../lib/d3.js"></script>
+    </head>
+    <body>
+        <!--
+            鼠标移动，柱状图改变颜色
+        -->
+        <div id="graph">
+
+        </div>
+        <script type="text/javascript">
+            /**使用D3在body元素中添加svg*/
+            var width = 400;
+            var height = 400;
+
+            /**
+                在SVG中，绘制矩形的标签是rect。
+                <svg>
+                    <rect></rect>
+                </svg>
+                矩形有四个属性：
+                    x: 矩形左上角的x坐标
+                    y: 矩形左上角的y坐标
+                    width: 矩形的宽度
+                    height: 矩形的高度
+            */
+
+            //绘制矩形
+            var dataArr = [123, 234, 100, 30, 50, 80];
+                /**
+                    svg.selectAll('rect')
+                        .data(dataArr)
+                        .enter()
+                        .append('rect');
+                    上面代码的含义：当传入的数据比图形元素多时候，使用此方法添加足够的元素。
+                */
+
+                //定义svg画布
+                var graph = d3.select('#graph').append('svg')
+                    .attr('width', width)
+                    .attr('height', height);
+
+                //画布周围的空白
+                var padding = {
+                    left: 40,
+                    right: 30,
+                    top: 20,
+                    bottom: 20
+                };
+
+                //x轴比例尺
+                var xScale = d3.scale.ordinal()
+                    .domain(d3.range(dataArr.length))
+                    .rangeRoundBands([0, width - padding.left - padding.right]);
+
+                //y轴比例尺
+                var yScale = d3.scale.linear()
+                    .domain([0, d3.max(dataArr)])
+                    .range([height - padding.top - padding.bottom, 0]);
+
+                //定义x轴
+                var xAxis = d3.svg.axis()
+                    .scale(xScale).orient('bottom');
+
+                //定义y轴
+                var yAxis = d3.svg.axis()
+                    .scale(yScale).orient('left');
+
+                //添加矩形和文件
+                var rectPadding = 4;
+
+                //添加矩形
+                var rects = graph.selectAll('.myrect')
+                    .data(dataArr)
+                    .enter()
+                    .append('rect')
+                    .attr('class', 'myrect')
+                    .attr('transform', 'translate(' + padding.left + ',' + padding.top + ')')
+                    .attr('x', function(d, i) {
+                        return xScale(i) + rectPadding / 2;
+                    })
+                    // .attr('y', function(d) {
+                    //     return 0;//yScale(min);
+                    // })
+                    // .transition()
+                    // .delay(function(d, i) {
+                    //     return i * 200;
+                    // })
+                    // .duration(2000)
+                    // .ease('bounce')
+                    .attr('y', function(d) {
+                        console.log(d);
+                        return yScale(d);
+                    })
+                    .attr('width', xScale.rangeBand() - rectPadding)
+                    .attr('height', function(d) {
+                        return height - padding.top - padding.bottom - yScale(d);
+                    })
+                    .attr('fill', 'green')
+                    .on('mouseover', function(d, i) {
+                        d3.select(this).attr('fill', 'yellow');
+                    })
+                    .on('mouseout', function(d, i) {
+                        d3.select(this)
+                            .transition()
+                            .duration(1000)
+                            .attr('fill', 'green');
+                    });
+
+                    //添加文字
+                    var texts = graph.selectAll('.mytext')
+                        .data(dataArr)
+                        .enter()
+                        .append('text')
+                        .attr('class', 'mytext')
+                        .attr('transform', 'translate(' + padding.left + ',' + padding.top + ')')
+                        .attr('x', function(d, i) {
+                            return xScale(i) + rectPadding / 2;
+                        })
+                        .attr('y', function(d) {
+                            var min = yScale.domain()[0];
+                            return yScale(min);
+                        })
+                        .transition()
+                        .delay(function(d, i) {
+                            return i * 200;
+                        })
+                        .duration(2000)
+                        .ease('bounce')
+                        .attr('y', function(d) {
+                            return yScale(d);
+                        })
+                        .attr('dx', function() {
+                            return (xScale.rangeBand() - rectPadding) / 3;
+                        })
+                        .attr('dy', function() {
+                            return 20;
+                        })
+                        .text(function(d) {
+                            return d;
+                        });
+
+                    //添加X轴
+                    graph.append('g')
+                        .attr('class', 'axis')
+                        .attr('transform', 'translate(' + padding.left + ',' + (height - padding.bottom) + ')').call(xAxis);
+
+                    //添加y轴
+                    graph.append('g')
+                        .attr('class', 'axis')
+                        .attr('transform', 'translate(' + padding.left + ',' + padding.top + ')').call(yAxis);
+        </script>
+    </body>
+</html>

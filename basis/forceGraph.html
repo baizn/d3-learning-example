@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>D3-力导向图</title>
+        <script type="text/javascript" src="../lib/d3.js"></script>
+    </head>
+    <body>
+        <!--
+            力导向图用到的布局是：d3.layout.force()
+        -->
+        <script type="text/javascript">
+            var width = 400;
+            var height = 400;
+
+            var svg = d3.select('body').append('svg')
+                .attr('width', width)
+                .attr('height', height);
+
+            var nodes = [
+                {name: '重庆'},
+                {name: '北京'},
+                {name: '上海'},
+                {name: '天津'},
+                {name: '三亚'},
+                {name: '青岛'},
+                {name: '兰州'},
+                {name: '西安'},
+                {name: '庆阳'}
+            ];
+
+            var sources = [
+                {source: 0, target: 1},
+                {source: 0, target: 2},
+                {source: 0, target: 3},
+                {source: 0, target: 4},
+                {source: 1, target: 5},
+                {source: 1, target: 6},
+                {source: 1, target: 7},
+                {source: 1, target: 8}
+            ];
+
+            //定义力导向图的布局
+            var force = d3.layout.force()
+                .nodes(nodes)
+                .links(sources)
+                .size([width, height])
+                .linkDistance(150)
+                .charge([-400]);
+
+            console.log(nodes, sources);
+
+            //力学作用生效
+            force.start();
+
+            //添加连线
+            var svgLines = svg.selectAll('line')
+                .data(sources)
+                .enter()
+                .append('line')
+                .style('stroke', '#ccc')
+                .style('stroke-width', 1);
+
+            var color = d3.scale.category20();
+
+            //添加节点
+            var svgNodes = svg.selectAll('circle')
+                .data(nodes)
+                .enter()
+                .append('circle')
+                .attr('r', 20)
+                .style('fill', function(d, i) {
+                    return color(i);
+                })
+                //节点可以移动
+                .call(force.drag);
+
+            //添加描述文字
+            var svgText = svg.selectAll('text')
+                .data(nodes)
+                .enter()
+                .append('text')
+                .style('fill', 'black')
+                .attr('dx', 20)
+                .attr('dy', 8)
+                .text(function(d) {
+                    return d.name;
+                });
+
+            //更新连线的坐标
+            force.on('tick', function() {
+                svgLines.attr('x1', function(d) {
+                    return d.source.x;
+                })
+                .attr('y1', function(d) {
+                    return d.source.y;
+                })
+                .attr('x2', function(d) {
+                    return d.target.x;
+                })
+                .attr('y2', function(d) {
+                    return d.target.y;
+                });
+
+                //更新节点坐标
+                svgNodes.attr('cx', function(d) {
+                    return d.x;
+                })
+                .attr('cy', function(d) {
+                    return d.y;
+                });
+
+                //更新文字坐标
+                svgText.attr('x', function(d) {
+                    return d.x;
+                })
+                .attr('y', function(d) {
+                    return d.y;
+                });
+            });
+        </script>
+    </body>
+</html>

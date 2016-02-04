@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>D3-数据绑定</title>
+        <script type="text/javascript" src="../lib/d3.js"></script>
+    </head>
+    <body>
+        <!--
+            D3中，选择元素的方法有两个：
+            d3.select(): 选择指定元素的第一个；
+            d3.selectAll(): 选择指定的全部元素
+            这两个函数返回的结果成为选择集
+            使用示例如下：
+            var body = d3.select('body');
+            var span = body.select('span');
+            var spans = body.selectAll('span');
+
+            D3中可以使用一下两个函数绑定数据：
+            datum():  绑定一个数据到选择集；
+            data(): 绑定一个数组到选择集上面，数组各项值和选择集对应
+        -->
+        <p></p>
+        <p></p>
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+        <script type="text/javascript">
+            var data = '数据绑定'
+            var p = d3.select('body').selectAll('p');
+            p.datum(data);
+
+            /*
+                @param d 代表数据
+                @param i 数据的索引
+            **/
+            p.text(function(d, i) {
+                return '第' + i + 'p元素绑定的数据是 ' + d;
+            });
+
+            var dataArr = ['d3', 'react', 'js'];
+            var spans = d3.select('body').selectAll('span');
+            spans.data(dataArr);
+            spans.style('color', 'red');
+            spans.text(function(d, i) {
+                return d;
+            });
+        </script>
+    </body>
+</html>

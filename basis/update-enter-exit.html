@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>D3-update-enter-exit</title>
+        <script type="text/javascript" src="../lib/d3.js"></script>
+    </head>
+    <body>
+        <p></p>
+        <p>
+
+        </p>
+        <!--
+            update与enter
+                当对应的元素不足时（绑定元素大于对应元素），需要添加元素。
+            update部分的处理方法一般是更新属性值；
+            enter部分一般处理方式：先添加元素后，赋属性值；
+            exit部分的一般处理方式：删除元素。
+        -->
+        <script type="text/javascript">
+            var dataArr = [2, 3, 4, 5, 6];
+            var p = d3.select('body').selectAll('p');
+            console.log(p);
+            //获取update部分
+            var update = p.data(dataArr);
+            console.log(update);
+
+            //update部分处理：更新属性值
+            update.text(function(d) {
+                console.log('update ' + d);
+                return 'update ' + d;
+            });
+
+            //获取enter部分
+            var enter = update.enter();
+            console.log(enter);
+
+            //enter部分的处理：添加元素后赋值
+            enter.append('p').text(function(d) {
+                console.log('enter ' + d);
+                return 'enter ' + d;
+            });
+
+            //exit部分：删除元素
+            var exit = update.exit();
+            exit.text(function(d) {
+                return 'exit';
+            });
+        </script>
+    </body>
+</html>
